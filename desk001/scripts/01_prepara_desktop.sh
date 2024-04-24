@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-#CABEÇALHO DO SEU SCRIPT.
 var_time=1
 clear
 while true;do
@@ -14,7 +13,8 @@ echo "Escolha uma opção:
 	  4 - Instala o antivirus Clam [ root ]
 	  5 - Instala pacotes úteis [ root ]
 	  6 - Instala/Atualiza o Navegador Sankhya [ user ]
-	  7 - Para a descoberta de impressoras [ root ]
+	  7 - Definir o papel de parede institucional [ user ]
+	  8 - Para a descoberta de impressoras [ root ]
 	  "
 echo " "
 echo -n "Opção escolhida: "
@@ -73,7 +73,7 @@ case $opcao in
 				apt autoclean -y
                 ;;
         6)
-                echo ""
+                echo "Instalando o Navegador Sankhya"
                 sleep $var_time
 				cd ~/
 				mkdir Sankhya
@@ -83,7 +83,6 @@ case $opcao in
 				wget https://grfetvhg7pdl.compat.objectstorage.sa-saopaulo-1.oraclecloud.com/navegador-sankhya/NavegadorSankhya_1.3b370_linuxx64.tar.gz
 				tar -xvzf *.tar.gz
 				mv Navegador_Sankhya-1.3b370/ Navegador_Sankhya
-
 				cd ~/
 				cd Área\ de\ Trabalho/
 				rm Sankhya 
@@ -93,6 +92,28 @@ case $opcao in
 				chmod +x Sankhya
                 ;;
         7)
+                echo "Definindo o papel de parede"
+                sleep $var_time
+				cd ~/
+				cd Sankhya
+				mkdir wallpaper/
+				rm wallpaper.jpg
+				wget https://github.com/marcusbhte/neo-public/blob/76d9fc67e086501cc47b719aa52570157e8bc21d/desk001/wallpaper/wallpaper.jpg
+				WALLPAPERS="$HOME/Sankhya/wallpaper" #coloque aqui a localização das imagens.
+				ALIST=( `ls -w1 $WALLPAPERS` )
+				RANGE=${#ALIST[@]}
+				let "number = 0"
+				let LASTNUM="`cat $WALLPAPERS/.last` + 1"
+				let "number = $LASTNUM % $RANGE"
+				echo $number > $WALLPAPERS/.last
+				#
+				if [ $number -gt $RANGE ];then
+				  number=1
+				fi
+				#
+				gsettings set org.gnome.desktop.background picture-uri "file://$WALLPAPERS/${ALIST[$number]}"
+                ;;
+        8)
                 echo "Parando a descoberta de impressoras"
                 sleep $var_time
 				chmod a-x /etc/init.d/avahi-daemon
@@ -107,7 +128,7 @@ case $opcao in
                 exit 0
                 ;;
         *)
-                echo Opção inválida, tente novamente!
+                echo "Opção inválida, tente novamente!"
                 ;;
 esac
 done
