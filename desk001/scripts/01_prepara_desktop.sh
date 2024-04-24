@@ -46,7 +46,8 @@ echo "Escolha uma opção:
 	5 - Instala pacotes úteis [ root ]
 	6 - Instala/Atualiza o Navegador Sankhya [ user ]
 	7 - Definir o papel de parede institucional [ user ]
-	8 - Para a descoberta de impressoras [ root ]"
+	8 - Para a descoberta de impressoras [ root ]
+	9 - Instalar o RealVNC (Opcional) [ root ]"
 echo " "
 echo -n "Opção escolhida: "
 read opcao
@@ -179,6 +180,44 @@ case $opcao in
 				sed 's/^BrowseLocalProtocols.*$/BrowseLocalProtocols\ none/' -i /etc/cups/cupsd.conf
 				service avahi-daemon stop
 				service cups-browsed stop
+                ;;
+        9)
+				clear
+                echo "Instalando o RealVNC Server"
+				echo ""
+				echo "------------------------------------------------------"
+                sleep $var_time
+				# Uninstall and Stop X11VNC service
+				apt purge x11vnc -y
+				service x11vnc stop
+				apt autoremove -y
+				apt autoclean -y
+				# Download and unpack the latest binary on a 64-bit Debian-compatible system:
+				# curl -L -o VNC https://www.realvnc.com/connect/download/binary/latest/debian/32-bit/
+				curl -L -o VNC https://www.realvnc.com/connect/download/binary/latest/debian/64-bit/
+				# Install VNC Server on a Debian-compatible system (assuming download file named as above):
+				dpkg -i VNC
+				rm VNC
+				# Apply your license key, available from the Deployment page of your RealVNC account:
+				# vnclicense -add 
+				# Custom Settings
+				rm /etc/vnc/config.d/common.custom
+				echo "#Custom Settings" >> /etc/vnc/config.d/common.custom
+				echo "Encryption=AlwaysOff" >> /etc/vnc/config.d/common.custom
+				echo "Authentication=VncAuth" >> /etc/vnc/config.d/common.custom
+				echo "ConnNotifyTimeout=0" >> /etc/vnc/config.d/common.custom
+				echo "DisableTrayIcon=1" >> /etc/vnc/config.d/common.custom
+				echo "EnableRemotePrinting=false" >> /etc/vnc/config.d/common.custom
+				echo "EnableAutoUpdateChecks=false" >> /etc/vnc/config.d/common.custom
+				echo "EnableManualUpdateChecks=false" >> /etc/vnc/config.d/common.custom
+				# Specify a VNC password for VNC Server in Service Mode:
+				vncpasswd -service 
+				# Mark or unmark the service to be started at boot time with:
+				systemctl enable vncserver-x11-serviced.service
+				# Start VNC Server on a Linux system using systemd:
+				systemctl start vncserver-x11-serviced.service
+				# Show Status
+				systemctl status vncserver-x11-serviced.service
                 ;;
         0)
 				clear
