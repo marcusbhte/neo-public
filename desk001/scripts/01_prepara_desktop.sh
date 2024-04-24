@@ -97,8 +97,9 @@ case $opcao in
 				cd ~/
 				cd Sankhya
 				mkdir wallpaper/
+				cd wallpaper/
 				rm wallpaper.jpg
-				wget https://github.com/marcusbhte/neo-public/blob/76d9fc67e086501cc47b719aa52570157e8bc21d/desk001/wallpaper/wallpaper.jpg
+				wget https://raw.githubusercontent.com/marcusbhte/neo-public/76d9fc67e086501cc47b719aa52570157e8bc21d/desk001/wallpaper/wallpaper.jpg
 				WALLPAPERS="$HOME/Sankhya/wallpaper" #coloque aqui a localização das imagens.
 				ALIST=( `ls -w1 $WALLPAPERS` )
 				RANGE=${#ALIST[@]}
